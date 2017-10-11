@@ -38,13 +38,15 @@ class VkClient:
                 server["response"]["key"]) + "&ts=" + str(lastTs) + "}&wait=25&mode=2&version=1"
 
             response = json.loads(req.get(longpool).content)
+            try:
+                for event in response["updates"]:
+                    if (event[0] == 4) and not (int(event[2]) & 2 == 2):
+                            print("Got a message")
+                            method(int(event[3]), str(event[6]))
 
-            for event in response["updates"]:
-                if (event[0] == 4) and not (int(event[2]) & 2 == 2):
-                        print("Got a message")
-                        method(int(event[3]), str(event[6]))
-
-            lastTs = response["ts"]
+                lastTs = response["ts"]
+            except Exception as exception:
+                print(exception)
 
 
     def getgroup(self, ids):
